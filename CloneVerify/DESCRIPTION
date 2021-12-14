@@ -1,0 +1,20 @@
+Package: CloneVerify
+Title: This will classify Criollo_22, Matina_1_6, Pound_7 clones using SNP data
+Version: 0.0.0.9000
+Authors@R: person("Dayana", "Rodezno", email = "drodezno@ufl.edu",
+                  role = c("aut", "cre"))
+Description: This package will take SNP genotypic data and be able to match it to the most commonly used clones that are used for trials and los theier labels (Criollo_22, Matina_1_6, and Pound_7). In the end we will have a file with verified clonal names associated with the unique identifiers of the sample/tree name so we can backtrack and relabel them physcially.Lazydata=True 
+License: use_mit_license()
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Depends: 
+    R (>= 2.10)
+Imports: tidyverse
+LazyData: true
+Suggests: 
+    rmarkdown,
+    knitr,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr

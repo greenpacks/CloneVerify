@@ -1,0 +1,99 @@
+---
+title: "CloneVerify"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CloneVerify}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This is the CloneVerify package which uses 6 distinct SNPs to identify clones  (Criollo_22, Matina_1_6, Pound_7), when the tags fall so that we avoid collecting incorrect data. The package is dependent on Tidyverse; so it should also be installed. 
+```{r}
+#required package:
+library(tidyverse)
+library(CloneVerify)
+```
+Introduction:
+The package requires a standard format for data. I have included an example of a correct data set called "demo". It is 68 rows and 10 columns wide. It is a group of trees of 3 possible clones (Criollo_22, Matina_1_6, Pound_7) that are most commonly used in clonal trials. The trees often lose labels or the tags find and often have to be re-identified. 
+
+Each row in the data set represents an individual tree. The columns are: 
+
+Chip.BC = The chip barcode the genotyping was done on. 
+
+Well = The location of the sample on the chip
+
+ID = The status of the tree. Whether it is a clonal reference (Criollo_22, Matina_1_6, Pound_7) or if it the sample/tree that is an unknown( we do not know what it is a clone of). Unknowns can happen for a lot of reasons such as loss of tag information, or poorly kept maps. I have created an R package that will help my analyze this data more efficiently for the future. 
+
+DC= A unique identifier given to each sample/tree
+
+Columns 5-10: Are 10 SNP marker names that are used for "offtyping" the trees. These specific markers are used for these three clones because they result in  1 = homozygote_1,  2= homozygote_2, 3= Heterozygote. So they make it really easy to tell these three clones apart. 
+na = function(data) {
+    na.omit(data)
+}
+```{r}
+head(demo)
+dim(demo)
+```
+
+Functions:
+# na
+As this is a real world data set I want to exclude missing data (NA). The first step of the method is to remove the rows with missing data. I did this with the na function in the package below:
+na = function(data){
+  na.omit(data)
+}
+```{r}
+d2 = na(demo)
+```
+This removes all the samples/trees that have missing data on at least one of the SNPs. 
+
+#uni_gt
+This function will give the amount of unique genotypes:
+uni_gt = function(data) {
+  unique(data)
+}
+```{r}
+uni_gt(d2[,c(5:10)])
+```
+There are 3 unique genotypes in the data set, meaning that all three clones are present in the sampling and no offtypes have occured.
+
+#dend
+the dend() fucntion will give a visual represenation to check that the data clusters into 3 groups 
+
+dend = function (x ){
+dend <- hclust(dist(x))
+plot(dend)
+}
+```{r}
+d2_sub <- d2[ , 5:10]
+dend(x= d2_sub)
+```
+Again the dendogram show visually that there are 3 groups. 
+
+#Verify
+The Verify functions adds a column to the data (Verified_clone). Which will identify which clone each tree is.
+Verify = function (data){
+  Criollo_22 = data %>%
+  filter(TcSNP606 == 1, ) %>%
+  mutate(Verified_clone = "Criollo_22")
+  
+  Matina_1_6= data %>%
+  filter(TcSNP606 == 2, ) %>%
+  mutate(Verified_clone = "Matina_1_6")
+  
+  Pound_7 = data %>%
+  filter(TcSNP606 == 3, ) %>%
+  mutate(Verified_clone = "Pound_7")
+  
+  Verified_Clonal_Data = do.call("rbind", list(Criollo_22, Matina_1_6, Pound_7))
+  
+  head(print(Verified_Clonal_Data))
+}
+
+```{r}
+
+
+Final_data = Verify(d2)
+
+```
+
+

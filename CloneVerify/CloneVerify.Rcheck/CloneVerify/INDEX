@@ -1,0 +1,7 @@
+Verify                  : Verify clones
+demo                    A stndard data set of SNP data of 3 clonal
+                        references and 65 Uknown samples that need to
+                        be identified as one of the three clones.
+dend                    : Dendogram
+na                      : NA remove
+uni_gt                  : Unique clone
